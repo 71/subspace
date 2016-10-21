@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subs", "Subs\Subs.csproj", "{C426B8B0-F131-4EC5-BB00-25F5AFFF60BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subspace", "Subspace\Subspace.csproj", "{C426B8B0-F131-4EC5-BB00-25F5AFFF60BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
