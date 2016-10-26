@@ -20,7 +20,7 @@ namespace Subspace
     {
         #region Ctor, Props, Dtor, Login
         public const string ENDPOINT = "http://api.opensubtitles.org/xml-rpc";
-        public const string USER_AGENT = "Subspace";
+        public const string USER_AGENT = "Subspace V1";
 
         public HttpClient Client { get; private set; }
         public string Token { get; private set; }
@@ -61,7 +61,7 @@ namespace Subspace
         private static Dictionary<string, string> ParseResponse(string res)
         {
             return Regex
-                .Matches(res, @"<member>\s*<name>(.+)<\/name>\s*<value>\s*<\w+>(.+)<\/\w+>\s*<\/value>\s*<\/member>", RegexOptions.IgnoreCase)
+                .Matches(res, @"<member>\s*<name>(.+?)<\/name>\s*<value>\s*(?:(?:<\w+\/>)|(?:<\w+>(.+?)<\/\w+>))\s*<\/value>\s*<\/member>", RegexOptions.IgnoreCase)
                 .Cast<Match>()
                 .ToDictionary(x => x.Groups[1].Value, x => x.Groups[2].Value);
         }
@@ -111,22 +111,22 @@ namespace Subspace
         {
             return new Subtitle
             {
-                Format = sub["SubFormat"],
-                Rating = double.Parse(sub["SubRating"], NumberFormatInfo.InvariantInfo),
-                DownloadsCount = int.Parse(sub["SubDownloadsCnt"]),
+                Format = sub.Get("SubFormat"),
+                Rating = double.Parse(sub.Get("SubRating") ?? "0", NumberFormatInfo.InvariantInfo),
+                DownloadsCount = int.Parse(sub.Get("SubDownloadsCnt") ?? "0"),
 
-                ID = int.Parse(sub["IDSubtitle"]),
-                Hash = sub["SubHash"],
-                DownloadLink = new Uri(sub["SubDownloadLink"]),
-                Filename = sub["SubFileName"],
-                HearingImpaired = sub["SubHearingImpaired"] == "1",
-                Language = sub["ISO639"],
+                ID = int.Parse(sub.Get("IDSubtitle") ?? "0"),
+                Hash = sub.Get("SubHash"),
+                DownloadLink = new Uri(sub.Get("SubDownloadLink")),
+                Filename = sub.Get("SubFileName"),
+                HearingImpaired = sub.Get("SubHearingImpaired") == "1",
+                Language = sub.Get("ISO639"),
 
-                MovieYear = int.Parse(sub["MovieYear"]),
-                MovieID = int.Parse(sub["IDMovie"]),
-                MovieName = sub["MovieName"],
-                MovieRating = double.Parse(sub["MovieImdbRating"], NumberFormatInfo.InvariantInfo),
-                ImdbID = int.Parse(sub["IDMovieImdb"])
+                MovieYear = int.Parse(sub.Get("MovieYear") ?? "0"),
+                MovieID = int.Parse(sub.Get("IDMovie") ?? "0"),
+                MovieName = sub.Get("MovieName"),
+                MovieRating = double.Parse(sub.Get("MovieImdbRating") ?? "0", NumberFormatInfo.InvariantInfo),
+                ImdbID = int.Parse(sub.Get("IDMovieImdb") ?? "0")
             };
         }
 
@@ -149,20 +149,10 @@ namespace Subspace
 
         #region Actual methods
         /// <summary>
-        /// Try to get subtitles from hash, then from tag, then from query
+        /// Try to get subtitles from hash, tag, and query
         /// </summary>
-        public async Task<IEnumerable<Subtitle>> GetSubtitlesFromFilePlus(string filename, string language = "en", bool hearingImpaired = false)
+        public async Task<IEnumerable<Subtitle>> GetSubtitlesFromAll(string filename, string language = "en", bool hearingImpaired = false)
         {
-            IEnumerable<Subtitle> result;
-
-            result = await GetSubtitlesFromFile(filename, language, hearingImpaired);
-            if (result.Count() > 0)
-                return result;
-
-            result = await GetSubtitlesFromTag(filename, language, hearingImpaired);
-            if (result.Count() > 0)
-                return result;
-
             string cleanName = Path.GetFileNameWithoutExtension(filename).Replace('.', ' ').Replace('_', ' ');
             Match m;
 
@@ -173,20 +163,26 @@ namespace Subspace
             if (!m.Success)
                 m = Regex.Match(cleanName, @"(.+) *(\d{1,2})x(\d{1,3}).*", RegexOptions.IgnoreCase);
 
-            if (m.Success)
-            {
-                result = await GetSubtitlesFromQuery(m.Groups[1].Value, int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value), language, hearingImpaired);
-                if (result.Count() > 0)
-                    return result;
-            }
-            else
-            {
-                result = await GetSubtitlesFromQuery(cleanName, language, hearingImpaired);
-                if (result.Count() > 0)
-                    return result;
-            }
+            // try to clean up name even more
+            bool isShow = m.Success;
+            if (!isShow)
+                cleanName = Regex.Replace(cleanName, @"\d{3,4}[ip].*$|\(\d{4}\).*$|\d{4}.*$", "");
 
-            return Enumerable.Empty<Subtitle>();
+            using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
+            {
+                HttpResponseMessage res = isShow
+                    ? await Post(Templates.SEARCH_ALL_TVSHOW,
+                        token => Token, lang => language,
+                        hash => Helper.ToHexadecimal(Helper.ComputeMovieHash(fs)), size => fs.Length.ToString(),
+                        tag => filename, query => m.Groups[1].Value, season => m.Groups[2].Value, episode => m.Groups[3].Value)
+                    : await Post(Templates.SEARCH_ALL_MOVIE,
+                        token => Token, lang => language,
+                        hash => Helper.ToHexadecimal(Helper.ComputeMovieHash(fs)), size => fs.Length.ToString(),
+                        tag => filename, query => cleanName);
+
+                res.EnsureSuccessStatusCode();
+                return ExtractSubtitles(await res.Content.UnzipAsStringAsync(), hearingImpaired, language);
+            }
         }
         
         public async Task<IEnumerable<Subtitle>> GetSubtitlesFromFile(string filename, string language = "en", bool hearingImpaired = false)
@@ -197,7 +193,8 @@ namespace Subspace
                     token => Token,
                     lang => language,
                     hash => Helper.ToHexadecimal(Helper.ComputeMovieHash(fs)),
-                    size => fs.Length.ToString());
+                    size => fs.Length.ToString(),
+                    tag => filename);
 
                 res.EnsureSuccessStatusCode();
                 return ExtractSubtitles(await res.Content.UnzipAsStringAsync(), hearingImpaired, language);
@@ -253,6 +250,14 @@ namespace Subspace
     #region Helper
     internal static class Helper
     {
+        public static string Get(this Dictionary<string, string> dic, string key)
+        {
+            string res;
+            if (dic.TryGetValue(key, out res))
+                return res;
+            return null;
+        }
+
         public static async Task<string> UnzipAsStringAsync(this HttpContent content)
         {
             return Encoding.UTF8.GetString(await content.UnzipAsByteArrayAsync());

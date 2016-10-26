@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Subspace"
-        mc:Ignorable="d" Title="Subspace" Height="250" Width="400"
+        mc:Ignorable="d" Title="Subspace" Height="290" Width="400"
         ResizeMode="CanMinimize" WindowStyle="SingleBorderWindow"
         WindowStartupLocation="CenterScreen" Icon="ic.ico"
         Background="Black">
@@ -44,6 +44,13 @@
 
         <Border Grid.Row="1" AllowDrop="True"
                 Drop="Border_Drop" PreviewDragEnter="Border_DragEnter" DragLeave="Border_DragLeave">
+            <local:DropArea
+                Grid.Row="1" AllowDrop="True" Message="{Binding Message}" Loading="{Binding IsLoading}" IsEnabled="{Binding IsLoading}"
+                x:Name="DropZone" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+
+        <!--<Border Grid.Row="1" AllowDrop="True"
+                Drop="Border_Drop" PreviewDragEnter="Border_DragEnter" DragLeave="Border_DragLeave">
             <Border.Background>
                 <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
                     <GradientStop Color="#FF348F50" Offset="0"/>
@@ -63,6 +70,6 @@
                     </ProgressBar.Foreground>
                 </ProgressBar>
             </Grid>
-        </Border>
+        </Border>-->
     </Grid>
 </Window>

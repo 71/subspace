@@ -60,7 +60,7 @@ namespace Subspace
 ";
 
         /// <summary>
-        /// PARAMS: TOKEN, LANG, HASH, SIZE
+        /// PARAMS: TOKEN, LANG, HASH, SIZE, TAG
         /// </summary>
         public const string SEARCH_HASH = @"
 <?xml version=""1.0""?>
@@ -94,6 +94,12 @@ namespace Subspace
                   <name>moviebytesize</name>
                   <value>
                     <string>%SIZE%</string>
+                  </value>
+                </member>
+                <member>
+                  <name>tag</name>
+                  <value>
+                    <string>%TAG%</string>
                   </value>
                 </member>
               </struct>
@@ -229,6 +235,136 @@ namespace Subspace
                   <name>tag</name>
                   <value>
                     <string>%TAG%</string>
+                  </value>
+                </member>
+              </struct>
+            </value>
+          </data>
+        </array>
+      </value>
+    </param>
+  </params>
+</methodCall>
+";
+
+        /// <summary>
+        /// PARAMS: TOKEN, LANG, HASH, SIZE, TAG, QUERY
+        /// </summary>
+        public const string SEARCH_ALL_MOVIE = @"
+<?xml version=""1.0""?>
+<methodCall>
+  <methodName>SearchSubtitles</methodName>
+  <params>
+    <param>
+      <value>
+        <string>%TOKEN%</string>
+      </value>
+    </param>
+    <param>
+      <value>
+        <array>
+          <data>
+            <value>
+              <struct>
+                <member>
+                  <name>sublanguageid</name>
+                  <value>
+                    <string>%LANG%</string>
+                  </value>
+                </member>
+                <member>
+                  <name>moviehash</name>
+                  <value>
+                    <string>%HASH%</string>
+                  </value>
+                </member>
+                <member>
+                  <name>moviebytesize</name>
+                  <value>
+                    <string>%SIZE%</string>
+                  </value>
+                </member>
+                <member>
+                  <name>tag</name>
+                  <value>
+                    <string>%TAG%</string>
+                  </value>
+                </member>
+                <member>
+                  <name>query</name>
+                  <value>
+                    <string>%QUERY%</string>
+                  </value>
+                </member>
+              </struct>
+            </value>
+          </data>
+        </array>
+      </value>
+    </param>
+  </params>
+</methodCall>
+";
+
+        /// <summary>
+        /// PARAMS: TOKEN, LANG, HASH, SIZE, TAG, QUERY, SEASON, EPISODE
+        /// </summary>
+        public const string SEARCH_ALL_TVSHOW = @"
+<?xml version=""1.0""?>
+<methodCall>
+  <methodName>SearchSubtitles</methodName>
+  <params>
+    <param>
+      <value>
+        <string>%TOKEN%</string>
+      </value>
+    </param>
+    <param>
+      <value>
+        <array>
+          <data>
+            <value>
+              <struct>
+                <member>
+                  <name>sublanguageid</name>
+                  <value>
+                    <string>%LANG%</string>
+                  </value>
+                </member>
+                <member>
+                  <name>moviehash</name>
+                  <value>
+                    <string>%HASH%</string>
+                  </value>
+                </member>
+                <member>
+                  <name>moviebytesize</name>
+                  <value>
+                    <string>%SIZE%</string>
+                  </value>
+                </member>
+                <member>
+                  <name>tag</name>
+                  <value>
+                    <string>%TAG%</string>
+                  </value>
+                </member>
+                <member>
+                  <name>query</name>
+                  <value>
+                    <string>%QUERY%</string>
+                  </value>
+                </member>
+                <member>
+                  <name>season</name>
+                  <value>
+                    <string>%SEASON%</string>
+                  </value>
+                </member>
+                <member>
+                  <name>episode</name>
+                  <value>
+                    <string>%EPISODE%</string>
                   </value>
                 </member>
               </struct>

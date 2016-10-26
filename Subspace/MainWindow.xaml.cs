@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Shell;
 
 namespace Subspace
 {
@@ -45,14 +47,13 @@ namespace Subspace
         public static readonly DependencyProperty IsLoadingProperty =
             DependencyProperty.Register("IsLoading", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
-
         public OpenSubtitlesClient Client { get; private set; }
 
         public MainWindow()
         {
             InitializeComponent();
 
-            Languages = new Dictionary<string, string>
+            this.Languages = new Dictionary<string, string>
             {
                 { "en", "English" },
                 { "fr", "French" },
@@ -72,8 +73,7 @@ namespace Subspace
                 { "ch", "Chinese" }
             };
 
-            Message = "Drag and Drop files here.";
-
+            this.Message = "Drag and Drop files here.";
             this.DataContext = this;
         }
 
@@ -98,25 +98,33 @@ namespace Subspace
         private void Error(string msg)
         {
             Message = msg;
-            TaskbarInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Error;
+            TaskbarInfo.ProgressState = TaskbarItemProgressState.Error;
             IsLoading = false;
         }
 
         private void Success(string msg)
         {
             Message = msg;
-            TaskbarInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+            TaskbarInfo.ProgressState = TaskbarItemProgressState.None;
             IsLoading = false;
         }
 
         private async void Border_Drop(object sender, DragEventArgs e)
         {
+            if (DropZone.State == DropState.Invalid)
+            {
+                DropZone.State = DropState.None;
+                return;
+            }
+
+            DropZone.State = DropState.None;
+            TaskbarInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
             IsLoading = true;
-            TaskbarInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
+            AllowDrop = false;
 
             if (!await EnsureClientExists())
             {
-                Error("Couldn't connect to OpenSubtitles server.");
+                Error("Server error: Couldn't connect to OpenSubtitles server.");
                 return;
             }
             
@@ -132,7 +140,7 @@ namespace Subspace
                     string friendlyName = Path.GetFileNameWithoutExtension(file);
 
                     Message = $"Searching subtitles for {friendlyName}...";
-                    var subs = await Client.GetSubtitlesFromFilePlus(file, lang, false);
+                    var subs = await Client.GetSubtitlesFromAll(file, lang, false);
 
                     if (subs.FirstOrDefault() == null)
                     {
@@ -141,18 +149,27 @@ namespace Subspace
                     }
 
                     Message = $"Downloading subtitles for {friendlyName}...";
-                    File.WriteAllBytes(Path.ChangeExtension(file, "srt"), await Client.RetrieveSubtitle(subs.First()));
+                    await Task.Run(
+                        async () => File.WriteAllBytes(
+                            Path.ChangeExtension(file, "srt"),
+                            await Client.RetrieveSubtitle(subs.First())
+                        )
+                    );
                 }
 
-                if (errors > 0)
+                if (errors > 1)
                     Error($"Couldn't find subtitles for {errors} files.");
+                else if (errors == 1)
+                    Error($"Couldn't find subtitles for one file.");
                 else
                     Success(files.Length == 1 ? $"One subtitle loaded." : $"{files.Length} subtitles loaded.");
             }
             catch (Exception ex)
             {
-                Error(ex.Message);
+                Error("Internal error: " + ex.Message);
             }
+
+            AllowDrop = true;
         }
 
         private bool Correct(DragEventArgs e)
@@ -178,19 +195,12 @@ namespace Subspace
         private void Border_DragEnter(object sender, DragEventArgs e)
         {
             UIElement el = sender as UIElement;
-            
-            el.AllowDrop = Correct(e);
+            DropZone.State = Correct(e) ? DropState.Valid : DropState.Invalid;
         }
 
-        private async void Border_DragLeave(object sender, DragEventArgs e)
+        private void Border_DragLeave(object sender, DragEventArgs e)
         {
-            await Task.Delay(500);
-            Dispatcher.Invoke(() =>
-            {
-                (sender as UIElement).AllowDrop = true;
-            });
-            
-            // TODO: visual feedback
+            DropZone.State = DropState.None;
         }
     }
 }
