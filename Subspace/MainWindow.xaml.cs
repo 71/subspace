@@ -75,6 +75,7 @@ namespace Subspace
             
             this.Message = "Drag and Drop files here.";
             this.DataContext = this;
+            this.Topmost = true;
         }
 
         private async Task<bool> EnsureClientExists()
@@ -115,6 +116,15 @@ namespace Subspace
             TaskbarInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
             IsLoading = true;
             DropBorder.AllowDrop = false;
+
+#if DEBUG
+            Message = "Downloading subtitles...";
+            await Task.Delay(1000);
+            foreach (string __file in (string[])e.Data.GetData(DataFormats.FileDrop))
+                File.Create(Path.ChangeExtension(__file, "srt")).Dispose();
+            Success("Subtitles downloaded!");
+            return;
+#endif
 
             if (!await EnsureClientExists())
             {
