@@ -111,7 +111,7 @@ namespace Subspace
                 ChangeScale(1.2);
 
                 foreach (Path path in Paths)
-                    ChangePathDashOffset(path, 0);
+                    ChangePathDashOffset(path, 0, 500);
             }
             else
             {
@@ -119,7 +119,7 @@ namespace Subspace
 
                 int i = 0;
                 foreach (Path path in Paths)
-                    ChangePathDashOffset(path, -PathLengths[i++]);
+                    ChangePathDashOffset(path, -PathLengths[i++], 800);
             }
         }
 
@@ -179,9 +179,9 @@ namespace Subspace
         /// <summary>
         /// Animate a path's <see cref="Shape.StrokeDashOffset"/> property to a given value.
         /// </summary>
-        private void ChangePathDashOffset(Path path, double to)
+        private void ChangePathDashOffset(Path path, double to, int ms)
         {
-            DoubleAnimation anim = new DoubleAnimation(path.StrokeDashOffset, to, new Duration(TimeSpan.FromMilliseconds(500)))
+            DoubleAnimation anim = new DoubleAnimation(path.StrokeDashOffset, to, new Duration(TimeSpan.FromMilliseconds(ms)))
             {
                 EasingFunction = new CubicEase()
             };

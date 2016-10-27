@@ -20,7 +20,7 @@
         <Canvas x:Name="PathCanvas">
             <Canvas.Resources>
                 <Style TargetType="Path">
-                    <Setter Property="StrokeThickness" Value=".5" />
+                    <Setter Property="StrokeThickness" Value="1" />
                     <Setter Property="Stroke" Value="Crimson" />
                     <Setter Property="StrokeDashArray" Value="1000" />
                     <Setter Property="Effect">
@@ -31,22 +31,14 @@
                     </Setter>
                 </Style>
             </Canvas.Resources>
-            
-            <Path Data="M0.25,0.25 C0.25,0.25 7,19.5 36.5,48.5 66,77.5 101,87.5 101,87.5" Height="87.75" Canvas.Left="231" Canvas.Top="176" Width="101.25" />
-            <Path Data="M198,181 C198,181 201.25,236.75 263.25,260.75" Height="80.25" Canvas.Left="198" Stretch="Fill" Canvas.Top="181" Width="65.75"/>
-            <Path Data="M152,172.5 C148,186.5 127.25,214.25 156.25,255.75" Height="83.75" Canvas.Left="141.073" Stretch="Fill" Canvas.Top="172.5" Width="15.677"/>
-            <Path Data="M171,176 C171,176 172.75,229.25 200.75,258.25" Height="82.75" Canvas.Left="171" Stretch="Fill" Canvas.Top="176" Width="30.25"/>
-            <Path Data="M143.5,154.5 C143.5,154.5 54.75,200.25 87.75,251.75" Height="97.75" Canvas.Left="80.395" Stretch="Fill" Canvas.Top="154.5" Width="63.605"/>
-            <Path Data="M135.5,138 C135.5,138 -30.25,177.75 23.25,262.25" Height="124.75" Canvas.Left="12.615" Stretch="Fill" Canvas.Top="138" Width="123.385"/>
-            <Path Data="M144.5,124 C144.5,124 14.25,104.25 -21.25,159.25" Height="39.201" Canvas.Left="-21.25" Stretch="Fill" Canvas.Top="120.549" Width="166.25"/>
-            <Path Data="M144.5,94 C144.5,94 9.25,26.25 -34.25,94.25" Height="30.787" Canvas.Left="-34.25" Stretch="Fill" Canvas.Top="63.963" Width="179.25"/>
-            <Path Data="M153.5,82 C153.5,82 112.75,-59.75 5.75,2.25" Height="95.941" Canvas.Left="5.75" Stretch="Fill" Canvas.Top="-13.441" Width="148.25"/>
-            <Path Data="M174,75.333333 C174,75.333333 190.41667,-46.249664 79.75,-35.582997" Height="112.079" Canvas.Left="79.75" Stretch="Fill" Canvas.Top="-36.246" Width="95.609"/>
-            <Path Data="M200,68 C200,68 290.41667,-38.916667 172.41667,-38.25" Height="106.753" Canvas.Left="172.417" Stretch="Fill" Canvas.Top="-38.253" Width="61.192"/>
-            <Path Data="M238.66667,76 C238.66667,76 387.08301,55.083333 350.41634,-27.583333" Height="104.083" Canvas.Left="238.667" Stretch="Fill" Canvas.Top="-27.583" Width="118.075"/>
-            <Path Data="M262.66667,112 C262.66667,112 433.74966,71.083333 389.74966,-0.25" Height="112.75" Canvas.Left="262.667" Stretch="Fill" Canvas.Top="-0.25" Width="134.817"/>
-            <Path Data="M271.33333,135.33333 C271.33333,135.33333 406.41701,168.41699 435.75034,114.41699" Height="31.447" Canvas.Left="271.333" Stretch="Fill" Canvas.Top="114.417" Width="164.917"/>
-            <Path Data="M258.66667,164 C258.66667,164 344.41632,241.08333 429.74966,211.75" Height="54.909" Canvas.Left="258.667" Stretch="Fill" Canvas.Top="164" Width="171.583"/>
+            <Path Data="M135.4167,125.08333 C135.4167,125.08333 -2.9166667,116.75 -1.9166667,-2.5833333" Height="128.166" Canvas.Left="-1.922" Stretch="Fill" Canvas.Top="-2.583" Width="137.839"/>
+            <Path Data="M199.41666,60.750341 C199.41666,60.750341 214.08366,-2.25 399.41699,-2.25" Height="63.5" Canvas.Left="199.417" Stretch="Fill" Canvas.Top="-2.25" Width="200.5"/>
+            <Path Data="M264.41663,126.08367 C264.41663,126.08367 401.75,142.75034 401.08333,249.08367" Height="123.5" Canvas.Left="264.417" Stretch="Fill" Canvas.Top="126.083" Width="137.169"/>
+            <Path Data="M196.74967,188.08362 C196.74967,188.08362 165.08333,250.75 -1.25,250.08333" Height="62.506" Canvas.Left="-1.25" Stretch="Fill" Canvas.Top="188.083" Width="198.5"/>
+            <Path Data="M152.08324,83.083669 C152.08324,83.083669 30.083333,-0.91633079 207.08333,-1.2496641" Height="84.833" Canvas.Left="111.103" Stretch="Fill" Canvas.Top="-1.25" Width="96.48"/>
+            <Path Data="M247.7503,81.416961 C247.7503,81.416961 400.08366,19.083333 400.41699,150.75" Height="84.577" Canvas.Left="247.75" Stretch="Fill" Canvas.Top="66.673" Width="153.167"/>
+            <Path Data="M243.08386,172.08364 C243.08386,172.08364 350.41699,252.75033 193.08366,252.41699" Height="80.835" Canvas.Left="193.083" Stretch="Fill" Canvas.Top="172.083" Width="86.242"/>
+            <Path Data="M150.08333,165.41724 C141.30464,166.43087 -2.5043785,251.58123 -1.25,120.08366" Height="73.96" Canvas.Left="-1.258" Stretch="Fill" Canvas.Top="120.083" Width="151.841"/>
         </Canvas>
 
         <Canvas Panel.ZIndex="-5" x:Name="LoaderCanvas" Visibility="Collapsed">
