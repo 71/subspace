@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -72,7 +73,7 @@ namespace Subspace
                 { "jp", "Japanese" },
                 { "ch", "Chinese" }
             };
-
+            
             this.Message = "Drag and Drop files here.";
             this.DataContext = this;
         }
@@ -111,16 +112,10 @@ namespace Subspace
 
         private async void Border_Drop(object sender, DragEventArgs e)
         {
-            if (DropZone.State == DropState.Invalid)
-            {
-                DropZone.State = DropState.None;
-                return;
-            }
-
-            DropZone.State = DropState.None;
+            DropZone.DraggingOver = false;
             TaskbarInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
             IsLoading = true;
-            AllowDrop = false;
+            DropBorder.AllowDrop = false;
 
             if (!await EnsureClientExists())
             {
@@ -169,7 +164,7 @@ namespace Subspace
                 Error("Internal error: " + ex.Message);
             }
 
-            AllowDrop = true;
+            DropBorder.AllowDrop = true;
         }
 
         private bool Correct(DragEventArgs e)
@@ -194,13 +189,66 @@ namespace Subspace
 
         private void Border_DragEnter(object sender, DragEventArgs e)
         {
-            UIElement el = sender as UIElement;
-            DropZone.State = Correct(e) ? DropState.Valid : DropState.Invalid;
+            if (Correct(e))
+            {
+                DropZone.DraggingOver = true;
+                DropBorder.AllowDrop = true;
+            }
+            else
+            {
+                DropBorder.AllowDrop = false;
+            }
         }
 
         private void Border_DragLeave(object sender, DragEventArgs e)
         {
-            DropZone.State = DropState.None;
+            DropZone.DraggingOver = false;
+            DropBorder.AllowDrop = false;
+
+            Task.Run(async () => {
+                await Task.Delay(80);
+
+                Point cp = GetCursorPosition();
+
+                Dispatcher.Invoke(() =>
+                {
+                    if (cp.Y < this.Top || cp.Y > this.Top + this.ActualHeight
+                        || cp.X < this.Left || cp.X > this.Left + this.ActualWidth)
+                        DropBorder.AllowDrop = true;
+                    else
+                        Border_DragLeave(sender, e);
+                });
+            });
         }
+
+        #region GetCursorPosition
+        /// <summary>
+        /// Struct representing a point.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+
+            public static implicit operator Point(POINT point)
+            {
+                return new Point(point.X, point.Y);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the cursor's position, in screen coordinates.
+        /// </summary>
+        [DllImport("user32.dll")]
+        public static extern bool GetCursorPos(out POINT lpPoint);
+
+        public static Point GetCursorPosition()
+        {
+            POINT lpPoint;
+            GetCursorPos(out lpPoint);
+            return lpPoint;
+        }
+        #endregion
     }
 }

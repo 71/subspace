@@ -42,34 +42,11 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
 
-        <Border Grid.Row="1" AllowDrop="True"
+        <Border Grid.Row="1" AllowDrop="True" x:Name="DropBorder"
                 Drop="Border_Drop" PreviewDragEnter="Border_DragEnter" DragLeave="Border_DragLeave">
             <local:DropArea
                 Grid.Row="1" AllowDrop="True" Message="{Binding Message}" Loading="{Binding IsLoading}" IsEnabled="{Binding IsLoading}"
                 x:Name="DropZone" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Border>
-
-        <!--<Border Grid.Row="1" AllowDrop="True"
-                Drop="Border_Drop" PreviewDragEnter="Border_DragEnter" DragLeave="Border_DragLeave">
-            <Border.Background>
-                <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                    <GradientStop Color="#FF348F50" Offset="0"/>
-                    <GradientStop Color="#FF56B4D3" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.Background>
-            <Grid>
-                <TextBlock TextAlignment="Center" Text="{Binding Message}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontSize="18" TextWrapping="Wrap" Margin="20,0" TextOptions.TextFormattingMode="Display" />
-                <ProgressBar IsIndeterminate="{Binding IsLoading}" IsEnabled="{Binding IsLoading}" Height="4" VerticalAlignment="Top"
-                             Background="Transparent" BorderThickness="0" >
-                    <ProgressBar.Foreground>
-                        <LinearGradientBrush EndPoint="0,0" StartPoint="1,1">
-                            <GradientStop Color="#FFDD2476" Offset="0"/>
-                            <GradientStop Color="#FFFF512F" Offset="1"/>
-                        </LinearGradientBrush>
-                    </ProgressBar.Foreground>
-                </ProgressBar>
-            </Grid>
-        </Border>-->
     </Grid>
 </Window>

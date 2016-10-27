@@ -9,13 +9,6 @@ using System.Windows.Shapes;
 
 namespace Subspace
 {
-    public enum DropState
-    {
-        Valid,
-        Invalid,
-        None
-    }
-
     /// <summary>
     /// Interaction logic for DropArea.xaml
     /// </summary>
@@ -42,23 +35,25 @@ namespace Subspace
         public static readonly DependencyProperty LoadingProperty =
             DependencyProperty.Register("Loading", typeof(bool), typeof(DropArea), new PropertyMetadata(false, LoadingChanged));
 
-        public DropState State
+
+
+        public bool DraggingOver
         {
-            get { return (DropState)GetValue(StateProperty); }
-            set { SetValue(StateProperty, value); }
+            get { return (bool)GetValue(DraggingOverProperty); }
+            set { SetValue(DraggingOverProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for State.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty StateProperty =
-            DependencyProperty.Register("State", typeof(DropState), typeof(DropArea), new PropertyMetadata(DropState.None, StateChanged));
+        // Using a DependencyProperty as the backing store for DraggingOver.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DraggingOverProperty =
+            DependencyProperty.Register("DraggingOver", typeof(bool), typeof(DropArea), new PropertyMetadata(false, DraggingOverChanged));
         
         /// <summary>
         /// Static function called when the state changes.
         /// </summary>
-        private static void StateChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        private static void DraggingOverChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue != e.OldValue)
-                ((DropArea)obj).OnStateChanged((DropState)e.NewValue);
+                ((DropArea)obj).OnDraggingOverChanged((bool)e.NewValue);
         }
 
         /// <summary>
@@ -84,15 +79,7 @@ namespace Subspace
         /// <summary>
         /// <see cref="SolidColorBrush"/> corresponding to a valid drag & drop action.
         /// </summary>
-        public static SolidColorBrush ValidBrush
-        {
-            get { return new SolidColorBrush(Colors.Cyan); }
-        }
-
-        /// <summary>
-        /// <see cref="SolidColorBrush"/> corresponding to an invalid drag & drop action.
-        /// </summary>
-        public static SolidColorBrush InvalidBrush
+        public static SolidColorBrush CurveBrush
         {
             get { return new SolidColorBrush(Colors.Crimson); }
         }
@@ -117,28 +104,22 @@ namespace Subspace
         /// <summary>
         /// Function called when the state changes.
         /// </summary>
-        private void OnStateChanged(DropState state)
+        private void OnDraggingOverChanged(bool isDraggingOver)
         {
-            if (state == DropState.None)
+            if (isDraggingOver)
+            {
+                ChangeScale(1.2);
+
+                foreach (Path path in Paths)
+                    ChangePathDashOffset(path, 0);
+            }
+            else
             {
                 ChangeScale(1.0);
 
                 int i = 0;
                 foreach (Path path in Paths)
-                {
                     ChangePathDashOffset(path, -PathLengths[i++]);
-                }
-            }
-            else
-            {
-                if (state == DropState.Valid)
-                    ChangeScale(1.2);
-
-                foreach (Path path in Paths)
-                {
-                    path.Stroke = state == DropState.Valid ? ValidBrush : InvalidBrush;
-                    ChangePathDashOffset(path, 0);
-                }
             }
         }
 

@@ -8,20 +8,6 @@
       Height="250" Width="400"
       Background="#FFE8E8E8">
 
-    <UserControl.Resources>
-        <Style TargetType="Path">
-            <Setter Property="StrokeThickness" Value=".5" />
-            <Setter Property="Stroke" Value="Crimson" />
-            <Setter Property="StrokeDashArray" Value="1000" />
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect ShadowDepth="0" Color="Red"
-                                      Opacity=".5" BlurRadius="4" RenderingBias="Performance" />
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-
     <Grid>
         <Border CornerRadius="100" Height="100" Width="100" Background="White"
                 HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -32,6 +18,20 @@
         </Border>
 
         <Canvas x:Name="PathCanvas">
+            <Canvas.Resources>
+                <Style TargetType="Path">
+                    <Setter Property="StrokeThickness" Value=".5" />
+                    <Setter Property="Stroke" Value="Crimson" />
+                    <Setter Property="StrokeDashArray" Value="1000" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect ShadowDepth="0" Color="Red"
+                                              Opacity=".5" BlurRadius="4" RenderingBias="Performance" />
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Canvas.Resources>
+            
             <Path Data="M0.25,0.25 C0.25,0.25 7,19.5 36.5,48.5 66,77.5 101,87.5 101,87.5" Height="87.75" Canvas.Left="231" Canvas.Top="176" Width="101.25" />
             <Path Data="M198,181 C198,181 201.25,236.75 263.25,260.75" Height="80.25" Canvas.Left="198" Stretch="Fill" Canvas.Top="181" Width="65.75"/>
             <Path Data="M152,172.5 C148,186.5 127.25,214.25 156.25,255.75" Height="83.75" Canvas.Left="141.073" Stretch="Fill" Canvas.Top="172.5" Width="15.677"/>
@@ -52,8 +52,8 @@
         <Canvas Panel.ZIndex="-5" x:Name="LoaderCanvas" Visibility="Collapsed">
             <Canvas.Resources>
                 <Style TargetType="Line">
-                    <Setter Property="Stroke" Value="#AAA" />
-                    <Setter Property="StrokeThickness" Value="22" />
+                    <Setter Property="Stroke" Value="#CCC" />
+                    <Setter Property="StrokeThickness" Value="20" />
                     <Setter Property="Y1" Value="260" />
                     <Setter Property="Y2" Value="-10" />
                 </Style>
