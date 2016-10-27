@@ -33,7 +33,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ComboBox Grid.Row="0" ItemsSource="{Binding Languages}" SelectedIndex="0"
+        <ComboBox Grid.Row="0" ItemsSource="{Binding Languages}" SelectedItem="{Binding SubtitleLanguage}"
                   x:Name="LanguageBox" IsReadOnly="{Binding IsLoading}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>

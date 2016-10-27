@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
+using Microsoft.Win32;
 
 namespace Subspace
 {
@@ -23,8 +24,7 @@ namespace Subspace
         // Using a DependencyProperty as the backing store for Languages.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty LanguagesProperty =
             DependencyProperty.Register("Languages", typeof(Dictionary<string, string>), typeof(MainWindow), new PropertyMetadata(null));
-
-
+        
         public string Message
         {
             get { return (string)GetValue(MessageProperty); }
@@ -34,9 +34,7 @@ namespace Subspace
         // Using a DependencyProperty as the backing store for Message.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MessageProperty =
             DependencyProperty.Register("Message", typeof(string), typeof(MainWindow), new PropertyMetadata("Hello world"));
-
-
-
+        
         public bool IsLoading
         {
             get { return (bool)GetValue(IsLoadingProperty); }
@@ -46,8 +44,19 @@ namespace Subspace
         // Using a DependencyProperty as the backing store for IsLoading.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsLoadingProperty =
             DependencyProperty.Register("IsLoading", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+        
+        public KeyValuePair<string, string> SubtitleLanguage
+        {
+            get { return (KeyValuePair<string, string>)GetValue(SubtitleLanguageProperty); }
+            set { SetValue(SubtitleLanguageProperty, value); }
+        }
 
-        public OpenSubtitlesClient Client { get; private set; }
+        // Using a DependencyProperty as the backing store for SubtitleLanguage.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SubtitleLanguageProperty =
+            DependencyProperty.Register("SubtitleLanguage", typeof(KeyValuePair<string, string>), typeof(MainWindow), new PropertyMetadata(null));
+
+        private OpenSubtitlesClient Client { get; set; }
+        private RegistryKey DataKey { get; set; }
 
         public MainWindow()
         {
@@ -76,6 +85,8 @@ namespace Subspace
             this.Message = "Drag and Drop files here.";
             this.DataContext = this;
             this.Topmost = true;
+            this.DataKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Subspace", RegistryKeyPermissionCheck.ReadWriteSubTree);
+            this.SubtitleLanguage = this.Languages.First(x => x.Key == (string)DataKey.GetValue("Language", "en"));
         }
 
         private async Task<bool> EnsureClientExists()
@@ -134,7 +145,8 @@ namespace Subspace
             
             try
             {
-                string lang = ((KeyValuePair<string, string>)LanguageBox.SelectedItem).Key;
+                string lang = SubtitleLanguage.Key;
+                DataKey.SetValue("Language", lang);
                 int errors = 0;
 
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);

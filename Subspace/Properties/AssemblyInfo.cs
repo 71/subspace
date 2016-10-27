@@ -7,12 +7,12 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Subs")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Subspace")]
+[assembly: AssemblyDescription("Light desktop application for downloading subtitles from OpenSubtitles, by simply dragging and dropping video files on a GUI.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Subs")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyProduct("Subspace")]
+[assembly: AssemblyCopyright("Copyright © Grégoire GEIS 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
